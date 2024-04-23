@@ -1,3 +1,6 @@
+#include "soc/rtc_cntl_reg.h"
+
+
 int right1 = 14;
 int right2 = 27;
 
@@ -43,7 +46,7 @@ void turn180Degrees() {
 }
 
 void setup() {
-  //WRITE_PERI_REG(RTC_CNTL_BROWN_OUT_REG, 0); //disable brownout detector
+  // WRITE_PERI_REG(RTC_CNTL_BROWN_OUT_REG, 0); //disable brownout detector
   pinMode(right1, OUTPUT);
   pinMode(right2, OUTPUT);
   pinMode(left1, OUTPUT);
@@ -55,6 +58,6 @@ void loop() {
   forward();
   delay(1000); 
 
-  turn180Degrees();  // Rotate 180 degrees
+  backward();  // Rotate 180 degrees
   delay(1000);  // Wait for a second before repeating loop
 }
