@@ -1,45 +1,51 @@
-int right1 = 14;
-int right2 = 27;
+#DEFINE right1 14
+#DEFINE right2 27
 
-int left1 = 26;
-int left2 = 25;
+#DEFINE left1 26
+#DEFINE left2 25
 
-int trig = 33;
-int echo = 32;
+#DEFINE front_trig 33
+#DEFINE front_echo 32 
+
+#DEFINE back_trig 4
+#DEFINE back_echo 16
+
+#DEFINE right_trig 17
+#DEFINE right_echo 18
+
+#DEFINE left_trig 19
+#DEFINE left_echo 21
+
 int cm;
 int distance;
 long TIME;
 
 int counter = 0;
 
-
 void setup() {
   Serial.begin(115200);
-  
-  pinMode(trig, OUTPUT);
-  pinMode(echo, INPUT);
   
   pinMode(right1, OUTPUT);
   pinMode(right2, OUTPUT);
   pinMode(left1, OUTPUT);
   pinMode(left2, OUTPUT);
+
+  pinMode(front_trig, OUTPUT);
+  pinMode(front_echo, INPUT);
+  
+  pinMode(back_trig, OUTPUT);
+  pinMode(back_echo, INPUT);
+
+
 }
 
 void loop() {
   distance = get_distance();
   Serial.println(distance);
   
-  if (counter == 3) {
-    turn180();
-    counter = 0;
-  }
-  else if (distance <= 50) {
-    stop(500);
-    decideTurn();
-    counter++;
-  } else {
-    forward();
-  }
+  forward();
+  delay(1000);
+  stop(1000);
 }
 
 // CALCULATE DISTANCE
