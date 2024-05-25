@@ -1,20 +1,20 @@
-#DEFINE right1 14
-#DEFINE right2 27
+#define right1 14
+#define right2 27
 
-#DEFINE left1 26
-#DEFINE left2 25
+#define left1 26
+#define left2 25
 
-#DEFINE front_trig 33
-#DEFINE front_echo 32 
+#define front_trig 33
+#define front_echo 32 
 
-#DEFINE back_trig 4
-#DEFINE back_echo 16
+#define back_trig 4
+#define back_echo 16
 
-#DEFINE right_trig 17
-#DEFINE right_echo 18
+#define right_trig 17
+#define right_echo 18
 
-#DEFINE left_trig 19
-#DEFINE left_echo 21
+#define left_trig 19
+#define left_echo 21
 
 int cm;
 int distance;
@@ -35,13 +35,27 @@ void setup() {
   
   pinMode(back_trig, OUTPUT);
   pinMode(back_echo, INPUT);
-
-
+  
+  pinMode(right_trig, OUTPUT);
+  pinMode(right_echo, INPUT);
+  
+  pinMode(left_trig, OUTPUT);
+  pinMode(left_echo, INPUT);
 }
 
 void loop() {
-  distance = get_distance();
-  Serial.println(distance);
+  // Print distances for all sensors
+  Serial.print("Front Distance: ");
+  Serial.println(get_distance(front_trig, front_echo));
+  
+  Serial.print("Back Distance: ");
+  Serial.println(get_distance(back_trig, back_echo));
+  
+  Serial.print("Right Distance: ");
+  Serial.println(get_distance(right_trig, right_echo));
+  
+  Serial.print("Left Distance: ");
+  Serial.println(get_distance(left_trig, left_echo));
   
   forward();
   delay(1000);
@@ -49,7 +63,7 @@ void loop() {
 }
 
 // CALCULATE DISTANCE
-int get_distance() {
+int get_distance(int trig, int echo) {
   const int numReadings = 15;  // Number of measurements to average
   int readings[numReadings];  // Array to store the distance readings
   int total = 0;              // Total of all distance measurements
