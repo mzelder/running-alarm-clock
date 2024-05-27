@@ -44,7 +44,6 @@ void setup() {
 }
 
 void loop() {
-  // Print distances for all sensors
   Serial.print("Front Distance: ");
   Serial.println(get_distance(front_trig, front_echo));
   
