@@ -63,10 +63,10 @@ void loop() {
 
 // CALCULATE DISTANCE
 int get_distance(int trig, int echo) {
-  const int numReadings = 15;  // Number of measurements to average
-  int readings[numReadings];  // Array to store the distance readings
-  int total = 0;              // Total of all distance measurements
-  int average = 0;            // Average distance
+  const int numReadings = 15;  
+  int readings[numReadings];  
+  int total = 0;              
+  int average = 0;            
   
   for (int i = 0; i < numReadings; i++) {
     digitalWrite(trig, LOW);
@@ -75,14 +75,14 @@ int get_distance(int trig, int echo) {
     delayMicroseconds(10);
     digitalWrite(trig, LOW);
     long time = pulseIn(echo, HIGH);
-    readings[i] = time / 58;  // Convert time to distance and store in the array
+    readings[i] = time / 58;
     
-    total += readings[i];     // Add the reading to the total
-    delay(10);                // Short delay between measurements to stabilize sensor
+    total += readings[i]
+    delay(10);
   }
   
-  average = total / numReadings;  // Calculate the average distance
-  return average;                 // Return the average distance
+  average = total / numReadings; 
+  return average; 
 }
 
 // ROBOT MOVE FUNCTIONS
