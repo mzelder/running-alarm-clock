@@ -1,8 +1,8 @@
-#define right1 14
-#define right2 27
+#define left1 14
+#define left2 27
 
-#define left1 26
-#define left2 25
+#define right1 26
+#define right2 25
 
 #define front_trig 33
 #define front_echo 32 
@@ -44,51 +44,61 @@ void setup() {
 }
 
 void loop() {
+  int frontDistance = get_distance(front_trig, front_echo);
+  int backDistance = get_distance(back_trig, back_echo);
+  int rightDistance = get_distance(right_trig, right_echo);
+  int leftDistance = get_distance(left_trig, left_echo);
+
   Serial.print("Front Distance: ");
-  Serial.println(get_distance(front_trig, front_echo));
+  Serial.println(frontDistance);
   
   Serial.print("Back Distance: ");
-  Serial.println(get_distance(back_trig, back_echo));
+  Serial.println(backDistance);
   
   Serial.print("Right Distance: ");
-  Serial.println(get_distance(right_trig, right_echo));
+  Serial.println(rightDistance);
   
   Serial.print("Left Distance: ");
-  Serial.println(get_distance(left_trig, left_echo));
-  
-  forward();
-  delay(1000);
-  stop(1000);
+  Serial.println(leftDistance);
+
+  if (frontDistance < 40) {
+    // Obstacle detected in front
+    stop(100);
+    backward();
+    delay(300);
+    stop(100);
+    
+    int rightDistance = get_distance(right_trig, right_echo);
+    int leftDistance = get_distance(left_trig, left_echo);
+    if (leftDistance > rightDistance) {
+      left();
+    } else {
+      right();
+    }
+  } else {
+    // No obstacle detected, move forward
+    forward();
+  }
 }
 
 // CALCULATE DISTANCE
 int get_distance(int trig, int echo) {
-  const int numReadings = 15;  
-  int readings[numReadings];  
-  int total = 0;              
-  int average = 0;            
+  digitalWrite(trig, LOW);
+  delayMicroseconds(2);
+  digitalWrite(trig, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(trig, LOW);
   
-  for (int i = 0; i < numReadings; i++) {
-    digitalWrite(trig, LOW);
-    delayMicroseconds(2);
-    digitalWrite(trig, HIGH);
-    delayMicroseconds(10);
-    digitalWrite(trig, LOW);
-    long time = pulseIn(echo, HIGH);
-    readings[i] = time / 58;
-    
-    total += readings[i]
-    delay(10);
+  long duration = pulseIn(echo, HIGH, 30000); // Timeout after 30 ms
+  if (duration == 0) {
+    return 999; // Timeout occurred
   }
+  int distance = duration / 58.2; // Calculate distance in cm
   
-  average = total / numReadings; 
-  return average; 
+  return distance;
 }
 
 // ROBOT MOVE FUNCTIONS
-// right motor is slower than the left 
-// so the left motor need to be slowed down 
-// left -> 200 , right -> 255
 
 void forward() {
   analogWrite(right1, 255);
@@ -105,43 +115,48 @@ void backward() {
 }
 
 void stop(int TIME) {
-  analogWrite(right1, 0);
-  analogWrite(right2, 0);
-  analogWrite(left1, 0);
-  analogWrite(left2, 0);
+  digitalWrite(right1, LOW);
+  digitalWrite(right2, LOW);
+  digitalWrite(left1, LOW);
+  digitalWrite(left2, LOW);
   delay(TIME);
 }
 
 void left() {
+  digitalWrite(right1, HIGH);
+  digitalWrite(right2, LOW);
+  digitalWrite(left1, LOW); 
+  digitalWrite(left2, LOW);
   analogWrite(right1, 255);
-  analogWrite(right2, 0);
-  analogWrite(left1, 0); 
-  analogWrite(left2, 0);
+  analogWrite(right2, LOW);
+  analogWrite(left1, LOW); 
+  analogWrite(left2, LOW);
   delay(300);
+  stop(100);
 }
 
 void right() {
-  analogWrite(right1, 0);
-  analogWrite(right2, 0);
-  analogWrite(left1, 200);
-  analogWrite(left2, 0);
+  digitalWrite(right1, LOW);
+  digitalWrite(right2, LOW);
+  digitalWrite(left1, HIGH);
+  digitalWrite(left2, LOW);
+  analogWrite(right1, LOW);
+  analogWrite(right2, LOW);
+  analogWrite(left1, 230); // Matching forward speed for smoothness
+  analogWrite(left2, LOW);
   delay(300);
+  stop(100);
 }
 
 void turn180() {
+  digitalWrite(right1, HIGH);
+  digitalWrite(right2, LOW);
+  digitalWrite(left1, LOW); 
+  digitalWrite(left2, LOW);
   analogWrite(right1, 255);
-  analogWrite(right2, 0);
-  analogWrite(left1, 0); 
-  analogWrite(left2, 0);
+  analogWrite(right2, LOW);
+  analogWrite(left1, LOW); 
+  analogWrite(left2, LOW);
   delay(700);
+  stop(100);
 }
-
-// CHOOSE WHERE GOING
-void decideTurn() {
-  if (random(2) == 0) {  // Randomly choose 0 or 1
-    left();
-  } else {
-    right();
-  }
-}
-
