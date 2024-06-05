@@ -89,17 +89,18 @@ int get_distance(int trig, int echo) {
   delayMicroseconds(10);
   digitalWrite(trig, LOW);
   
-  long duration = pulseIn(echo, HIGH, 30000); // Timeout after 30 ms
+  long duration = pulseIn(echo, HIGH, 30000); 
   if (duration == 0) {
-    return 999; // Timeout occurred
+    return 999; 
   }
-  int distance = duration / 58.2; // Calculate distance in cm
-  
+  int distance = duration / 58.2;
   return distance;
 }
 
 // ROBOT MOVE FUNCTIONS
-
+// Becasue of the poor workmanship of the wheels
+// left wheel need to be slow down so the robot will go straight
+// right->255, left->200
 void forward() {
   analogWrite(right1, 255);
   analogWrite(right2, 0);
@@ -142,7 +143,7 @@ void right() {
   digitalWrite(left2, LOW);
   analogWrite(right1, LOW);
   analogWrite(right2, LOW);
-  analogWrite(left1, 230); // Matching forward speed for smoothness
+  analogWrite(left1, 230); 
   analogWrite(left2, LOW);
   delay(300);
   stop(100);
