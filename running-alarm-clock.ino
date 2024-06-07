@@ -1,30 +1,43 @@
+#include <DFRobotDFPlayerMini.h>
+#include <SoftwareSerial.h>
+
 #define left1 14
 #define left2 27
-
 #define right1 26
 #define right2 25
-
 #define front_trig 33
 #define front_echo 32 
-
-#define back_trig 4
-#define back_echo 16
-
 #define right_trig 17
 #define right_echo 18
-
 #define left_trig 19
 #define left_echo 21
+
+// Define software serial pins for DFPlayer Mini
+static const uint8_t PIN_MP3_TX = 22; 
+static const uint8_t PIN_MP3_RX = 23; 
+
+SoftwareSerial softwareSerial(PIN_MP3_RX, PIN_MP3_TX);
+DFRobotDFPlayerMini player;
 
 int cm;
 int distance;
 long TIME;
-
 int counter = 0;
 
 void setup() {
   Serial.begin(115200);
-  
+  softwareSerial.begin(9600);
+
+  // Start communication with DFPlayer Mini
+  if (player.begin(softwareSerial)) {
+   Serial.println("OK");
+    // Set volume to maximum (0 to 30).
+    player.volume(30);
+    // Play the first MP3 file on the SD card
+    player.play(1);
+  } else {
+    Serial.println("Connecting to DFPlayer Mini failed!");
+  }
   pinMode(right1, OUTPUT);
   pinMode(right2, OUTPUT);
   pinMode(left1, OUTPUT);
@@ -32,9 +45,6 @@ void setup() {
 
   pinMode(front_trig, OUTPUT);
   pinMode(front_echo, INPUT);
-  
-  pinMode(back_trig, OUTPUT);
-  pinMode(back_echo, INPUT);
   
   pinMode(right_trig, OUTPUT);
   pinMode(right_echo, INPUT);
@@ -45,15 +55,12 @@ void setup() {
 
 void loop() {
   int frontDistance = get_distance(front_trig, front_echo);
-  int backDistance = get_distance(back_trig, back_echo);
   int rightDistance = get_distance(right_trig, right_echo);
   int leftDistance = get_distance(left_trig, left_echo);
 
   Serial.print("Front Distance: ");
   Serial.println(frontDistance);
-  
-  Serial.print("Back Distance: ");
-  Serial.println(backDistance);
+
   
   Serial.print("Right Distance: ");
   Serial.println(rightDistance);
@@ -98,9 +105,6 @@ int get_distance(int trig, int echo) {
 }
 
 // ROBOT MOVE FUNCTIONS
-// Becasue of the poor workmanship of the wheels
-// left wheel need to be slow down so the robot will go straight
-// right->255, left->200
 void forward() {
   analogWrite(right1, 255);
   analogWrite(right2, 0);
